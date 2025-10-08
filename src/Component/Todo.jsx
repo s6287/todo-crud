@@ -2,7 +2,8 @@ import React from 'react'
 import { useState } from 'react'
 function Todo() {
     const [List, addList] = useState([]);
-    const [inputvalue, readInputValue] = useState("")
+    const [inputvalue, readInputValue] = useState("");
+    const [editIndex, seteditIndex] = useState(null);
 
     function catchinputfeild(e) {
         readInputValue(e.target.value)
@@ -14,12 +15,28 @@ function Todo() {
         readInputValue("")
     }
 
-    function deleteTask(indexTodelete){
-        const newList = List.filter(function(currentelementshow , i){
-            return i != indexTodelete 
+    function deleteTask(indexTodelete) {
+        const newList = List.filter(function (currentelementshow, i) {
+            return i != indexTodelete
         })
         addList(newList);
     }
+
+    function editTask(index) {
+        seteditIndex(index);
+        // seteditValue(List[index])
+        readInputValue(List[index])
+    }
+
+    function saveTask() {
+        let copy = [...List];
+        copy[editIndex] = inputvalue;
+        addList(copy)
+        readInputValue("");
+        seteditIndex(null);
+    }
+
+
     return (
         <>
 
@@ -31,8 +48,8 @@ function Todo() {
                     value={inputvalue}
                     className="flex-1 px-4 py-2 border-2 border-amber-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-gray-400"
                 />
-                <button onClick={addtask} className="px-6 py-2 bg-amber-500 text-white font-medium rounded-lg hover:bg-amber-600 transition-colors duration-200">
-                    Add Task
+                <button onClick={editIndex !== null ? saveTask : addtask} className="px-6 py-2 bg-amber-500 text-white font-medium rounded-lg hover:bg-amber-600 transition-colors duration-200">
+                    {editIndex != null ? "Save Task" : "Add Task"}
                 </button>
             </div>
             {/* List showing  */}
@@ -42,8 +59,12 @@ function Todo() {
                         <li key={index}>
                             <div className="flex justify-between items-center border border-amber-400 rounded-lg px-4 py-2 bg-white shadow-sm">
                                 <span className="text-gray-800 font-medium">{item}</span>
-                                <button onClick={ function (){deleteTask(index)}} className="text-red-500 hover:text-red-700 font-medium">
+                                <button onClick={function () { deleteTask(index) }} className="text-red-500 hover:text-red-700 font-medium">
                                     Delete Task
+                                </button>
+
+                                <button onClick={function () { editTask(index) }} className="text-red-500 hover:text-red-700 font-medium">
+                                    Edit Task
                                 </button>
                             </div>
                         </li>
